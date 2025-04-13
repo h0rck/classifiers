@@ -42,6 +42,34 @@ classifiers is designed to streamline document processing workflows by automatin
    go build
    ```
 
+## Dependencies
+
+### Tesseract OCR
+
+This application requires Tesseract OCR for image text extraction. Follow these instructions to install it:
+
+#### Windows
+1. Visit https://github.com/UB-Mannheim/tesseract/wiki
+2. Download the latest installer (tesseract-ocr-w64-setup-v5.x.x.exe)
+3. During installation, select desired languages
+4. Restart the application after installation
+
+#### macOS
+1. Install Homebrew if you don't have it (https://brew.sh/)
+2. Run in terminal: `brew install tesseract tesseract-lang`
+3. Restart the application after installation
+
+#### Linux
+Ubuntu/Debian:
+```
+sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng
+```
+
+Fedora/RHEL:
+```
+sudo dnf install -y tesseract tesseract-langpack-eng
+```
+
 ## Usage
 
 ### Basic Usage
