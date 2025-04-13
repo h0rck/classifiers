@@ -1,0 +1,76 @@
+# Binários compilados para Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Arquivos de log
+*.log
+
+# Arquivos gerados pelo Go
+/bin/
+/pkg/
+
+# Diretório de saída de executáveis do projeto
+/output/
+
+# Diretório do Tesseract
+/tesseract/*.traineddata
+
+# Arquivos de dependência
+/vendor/
+
+# Arquivos de IDE e editores
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Arquivos de sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Configuração de projeto do Go
+go.work
+
+# Arquivos temporários
+*.tmp
+
+# Arquivos específicos do Wails
+/frontend/dist/
+/frontend/node_modules/
+/build/bin/
+/build/darwin/
+/build/linux/
+/build/windows/
+
+# Arquivos de debug do Delve
+debug
+__debug_bin
+
+# Arquivos de OCR gerados temporariamente
+*.hocr
+*.txt.tmp
+
+# Arquivos de configuração específicos do ambiente
+.env
+.env.local
+
+# Cache de air para hot-reload
+.air/
+
+# Arquivos de coverage
+coverage.txt
+coverage.html
+
+# Arquivos de teste
+**/testdata/
