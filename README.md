@@ -83,3 +83,47 @@ You can modify the default processing behavior by adjusting the `models.Processi
 
 To support additional document types, create new extractors in the `/services/extractors` directory and register them in the `DocumentExtractorFactory`.
 
+## Document Classification System
+
+The document classification system automatically categorizes documents based on their content and a set of predefined rules.
+
+### How It Works
+
+1. **Classification Rules**
+   Rules are defined with a document type and a set of keywords that identify that type.
+
+2. **Document Processing**
+   - The system extracts text content from documents
+   - Applies the classification rules to determine the document type
+   - Organizes documents according to their classification
+
+3. **File Browser Interface**
+   Navigate your file system to select documents or directories for processing:
+   - Browse directories with a clear visual representation
+   - Select individual files for processing
+   - Filter by supported file types
+   - Enter paths manually if needed
+
+4. **Classification Rules Management**
+   - View current classification rules
+   - Reload rules from external files
+   - Select different rule sets for different document types
+
+### Supported Document Types
+
+The classifier can identify various document types including:
+- Invoices
+- Contracts
+- Receipts
+- Reports
+- And more, depending on your rule configurations
+
+### Extending the Classifier
+
+The system follows a plugin architecture allowing for:
+- Adding new document types via rule definitions
+- Implementing custom classifiers for specialized document formats
+- Creating extraction strategies for different file types
+
+All components follow the SOLID principles to ensure maintainability and extensibility.
+
