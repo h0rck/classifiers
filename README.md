@@ -6,6 +6,52 @@ A powerful document processing system written in Go that extracts data from docu
 
 classifiers is designed to streamline document processing workflows by automating the extraction of relevant information from various document types and classifying them based on customizable rule sets. It features a console interface for easy interaction and uses a configurable architecture to adapt to different document processing needs.
 
+## ✨ How It Works ✨
+
+The document classification system automatically categorizes documents based on their content and predefined rules:
+
+### 1. Classification Rules
+> Rules are defined with a document type and a set of keywords that identify that type.
+> The system matches these keywords against document content to determine its category.
+
+### 2. Document Processing
+> **Extract** → **Classify** → **Organize**
+> 
+> - **Extract**: The system pulls text content from various document formats
+> - **Classify**: It applies classification rules to determine document type
+> - **Organize**: Documents are sorted according to their classification
+
+### 3. File Browser Interface
+> Navigate your file system with ease:
+> 
+> - 📁 Browse directories with a clear visual representation
+> - 📄 Select individual files for processing
+> - 🔍 Filter by supported file types
+> - ⌨️ Enter paths manually when needed
+
+### 4. Classification Rules Management
+> Take control of your document rules:
+> 
+> - 📋 View and edit current classification rules
+> - 🔄 Reload rules from external files
+> - 🔀 Select different rule sets for different document types
+
+### Supported Document Types
+
+The classifier can identify various document types including:
+- 📊 Invoices
+- 📜 Contracts
+- 🧾 Receipts
+- 📝 Reports
+- ➕ And more, depending on your rule configurations
+
+### Extending the Classifier
+
+The system follows a plugin architecture allowing for:
+- Adding new document types via rule definitions
+- Implementing custom classifiers for specialized document formats
+- Creating extraction strategies for different file types
+
 ## Features
 
 - Automated document data extraction
@@ -110,48 +156,6 @@ You can modify the default processing behavior by adjusting the `models.Processi
 ### Adding New Extractors
 
 To support additional document types, create new extractors in the `/services/extractors` directory and register them in the `DocumentExtractorFactory`.
-
-## Document Classification System
-
-The document classification system automatically categorizes documents based on their content and a set of predefined rules.
-
-### How It Works
-
-1. **Classification Rules**
-   Rules are defined with a document type and a set of keywords that identify that type.
-
-2. **Document Processing**
-   - The system extracts text content from documents
-   - Applies the classification rules to determine the document type
-   - Organizes documents according to their classification
-
-3. **File Browser Interface**
-   Navigate your file system to select documents or directories for processing:
-   - Browse directories with a clear visual representation
-   - Select individual files for processing
-   - Filter by supported file types
-   - Enter paths manually if needed
-
-4. **Classification Rules Management**
-   - View current classification rules
-   - Reload rules from external files
-   - Select different rule sets for different document types
-
-### Supported Document Types
-
-The classifier can identify various document types including:
-- Invoices
-- Contracts
-- Receipts
-- Reports
-- And more, depending on your rule configurations
-
-### Extending the Classifier
-
-The system follows a plugin architecture allowing for:
-- Adding new document types via rule definitions
-- Implementing custom classifiers for specialized document formats
-- Creating extraction strategies for different file types
 
 
 
