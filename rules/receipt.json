@@ -1,0 +1,181 @@
+[
+    {
+        "type": "posto_de_abastecimento",
+        "keywords": [
+            "combustível",
+            "gasolina",
+            "etanol",
+            "diesel",
+            "abastecimento",
+            "litros",
+            "bomba",
+            "km",
+            "veículo",
+            "automóvel",
+            "posto",
+            "petrobras",
+            "ipiranga",
+            "shell",
+            "tanque",
+            "GNV"
+        ]
+    },
+    {
+        "type": "shopping",
+        "keywords": [
+            "loja",
+            "shopping",
+            "praça de alimentação",
+            "roupa",
+            "calçado",
+            "eletrônicos",
+            "alimentação",
+            "quiosque",
+            "roupas",
+            "lazer",
+            "ingresso",
+            "cinema",
+            "estacionamento",
+            "compras"
+        ]
+    },
+    {
+        "type": "pedagio",
+        "keywords": [
+            "pedágio",
+            "praça de pedágio",
+            "tarifa",
+            "caminhão",
+            "automóvel",
+            "rodovia",
+            "concessionária",
+            "passagem",
+            "veículo",
+            "transponder",
+            "sem parar",
+            "tag",
+            "via fácil",
+            "ecoRodovias",
+            "CCR"
+        ]
+    },
+    {
+        "type": "estacionamento",
+        "keywords": [
+            "estacionamento",
+            "ticket",
+            "vaga",
+            "horas",
+            "minutos",
+            "permanência",
+            "entrada",
+            "saída",
+            "placa",
+            "veículo",
+            "carro",
+            "cobrado por hora",
+            "cancelas",
+            "parquímetro",
+            "manobrista"
+        ]
+    },
+    {
+        "type": "restaurante",
+        "keywords": [
+            "restaurante",
+            "mesa",
+            "garçom",
+            "pedido",
+            "refeição",
+            "comida",
+            "bebida",
+            "cardápio",
+            "porção",
+            "couvert",
+            "serviço",
+            "taxa de serviço",
+            "entrada",
+            "prato principal",
+            "sobremesa",
+            "nota de consumo"
+        ]
+    },
+    {
+        "type": "mercado",
+        "keywords": [
+            "mercado",
+            "supermercado",
+            "alimentos",
+            "carrinho",
+            "produtos",
+            "perecíveis",
+            "higiene",
+            "limpeza",
+            "hortifruti",
+            "açougue",
+            "padaria",
+            "bebidas",
+            "caixa",
+            "autoatendimento",
+            "cupom fiscal"
+        ]
+    },
+    {
+        "type": "farmacia",
+        "keywords": [
+            "farmácia",
+            "remédio",
+            "medicamento",
+            "genérico",
+            "tarja preta",
+            "receita médica",
+            "comprimidos",
+            "analgésico",
+            "antibiótico",
+            "farmacêutico",
+            "cosmético",
+            "dermocosmético",
+            "perfumaria",
+            "prescrição"
+        ]
+    },
+    {
+        "type": "hotel",
+        "keywords": [
+            "hotel",
+            "diária",
+            "check-in",
+            "check-out",
+            "reserva",
+            "hospedagem",
+            "quarto",
+            "suíte",
+            "serviço de quarto",
+            "café da manhã",
+            "taxa de turismo",
+            "estadia",
+            "recepção",
+            "cartão de acesso"
+        ]
+    },
+    {
+        "type": "transporte",
+        "keywords": [
+            "corrida",
+            "motorista",
+            "aplicativo",
+            "transporte",
+            "viagem",
+            "Uber",
+            "99",
+            "tempo estimado",
+            "rota",
+            "espera",
+            "origem",
+            "destino",
+            "veículo",
+            "corrida encerrada",
+            "valor dinâmico"
+        ]
+    }
+]
