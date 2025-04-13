@@ -12,26 +12,22 @@ import (
 )
 
 // ImageExtractor é um extrator que processa imagens usando OCR
-type ImageExtractor struct {
-	supportedFormats []string
-	tesseractPath    string
-}
-
-// NewImageExtractor cria uma nova instância do extrator de imagens
-func NewImageExtractor(tesseractPath string) *ImageExtractor {
-	return &ImageExtractor{
-		supportedFormats: []string{".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".gif"},
-		tesseractPath:    tesseractPath,
-	}
-}
+type ImageExtractor struct{}
 
 // ExtractText extrai texto de uma imagem usando OCR
 func (e *ImageExtractor) ExtractText(filePath string) (models.DocumentMetadata, error) {
-	if e.tesseractPath == "" {
-		return models.DocumentMetadata{
-			Filename: filepath.Base(filePath),
-			Text:     fmt.Sprintf("Imagem: %s (OCR não configurado)", filepath.Base(filePath)),
-		}, nil
+	// Procurar o tesseract no PATH do sistema
+	tesseractPath, err := exec.LookPath("tesseract")
+	if err != nil {
+		// Se não encontrar, tentar caminho padrão
+		tesseractPath = "/usr/bin/tesseract"
+		_, err = os.Stat(tesseractPath)
+		if err != nil {
+			return models.DocumentMetadata{
+				Filename: filepath.Base(filePath),
+				Text:     fmt.Sprintf("Imagem: %s (OCR não disponível)", filepath.Base(filePath)),
+			}, nil
+		}
 	}
 
 	// Criar um arquivo temporário para a saída do tesseract
@@ -43,11 +39,16 @@ func (e *ImageExtractor) ExtractText(filePath string) (models.DocumentMetadata, 
 
 	outputPrefix := filepath.Join(tempDir, "output")
 
-	// Executar o tesseract
-	cmd := exec.Command(e.tesseractPath, filePath, outputPrefix, "-l", "por")
+	// Executar o tesseract (com suporte para português)
+	cmd := exec.Command(tesseractPath, filePath, outputPrefix, "-l", "por")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return models.DocumentMetadata{}, fmt.Errorf("falha ao executar OCR: %w\nSaída: %s", err, string(output))
+		// Se falhar com português, tente com inglês
+		cmd = exec.Command(tesseractPath, filePath, outputPrefix)
+		output, err = cmd.CombinedOutput()
+		if err != nil {
+			return models.DocumentMetadata{}, fmt.Errorf("falha ao executar OCR: %w\nSaída: %s", err, string(output))
+		}
 	}
 
 	// Ler o arquivo de saída
@@ -75,17 +76,15 @@ func (e *ImageExtractor) postprocessText(text string) string {
 	text = strings.ReplaceAll(text, "\n", " ")
 	text = strings.ReplaceAll(text, "\r", " ")
 
-	// Remover caracteres indesejados
-	re = regexp.MustCompile(`[^\pL\pN\s.,;:!?()\[\]{}@#$%&*+\-=/\\'"\x60~<>|_]`)
-	text = re.ReplaceAllString(text, "")
-
 	return strings.TrimSpace(text)
 }
 
 // IsSupportedFormat verifica se o formato do arquivo é suportado
 func (e *ImageExtractor) IsSupportedFormat(filePath string) bool {
+	supportedFormats := []string{".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".gif"}
 	ext := strings.ToLower(filepath.Ext(filePath))
-	for _, format := range e.supportedFormats {
+
+	for _, format := range supportedFormats {
 		if ext == format {
 			return true
 		}
@@ -95,5 +94,5 @@ func (e *ImageExtractor) IsSupportedFormat(filePath string) bool {
 
 // GetSupportedFormats retorna os formatos suportados por este extrator
 func (e *ImageExtractor) GetSupportedFormats() []string {
-	return e.supportedFormats
+	return []string{".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".gif"}
 }

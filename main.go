@@ -19,7 +19,8 @@ func main() {
 	// Configurar o serviço de processamento de documentos
 	config := models.ProcessingConfig{
 		OutputDirectory: "./output",
-		MoveFiles:       true,
+		// aqui ele cria uma copia do arquivo
+		MoveFiles: false,
 	}
 
 	processingService := services.NewDocumentProcessingService(

@@ -19,6 +19,7 @@ func NewDocumentExtractorFactory() *DocumentExtractorFactory {
 			&WordExtractor{},
 			&ExcelExtractor{},
 			&TextFileExtractor{},
+			&ImageExtractor{},
 		},
 	}
 }
