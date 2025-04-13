@@ -1,0 +1,82 @@
+[
+    {
+        "type": "posto_de_abastecimento",
+        "keywords": [
+            "combustível",
+            "gasolina",
+            "etanol",
+            "diesel",
+            "abastecimento",
+            "litros",
+            "bomba",
+            "km",
+            "veículo",
+            "automóvel",
+            "posto",
+            "petrobras",
+            "ipiranga",
+            "shell",
+            "tanque",
+            "GNV"
+        ]
+    },
+    {
+        "type": "shopping",
+        "keywords": [
+            "loja",
+            "shopping",
+            "praça de alimentação",
+            "roupa",
+            "calçado",
+            "eletrônicos",
+            "alimentação",
+            "quiosque",
+            "roupas",
+            "lazer",
+            "ingresso",
+            "cinema",
+            "estacionamento",
+            "compras"
+        ]
+    },
+    {
+        "type": "pedagio",
+        "keywords": [
+            "pedágio",
+            "praça de pedágio",
+            "tarifa",
+            "caminhão",
+            "automóvel",
+            "rodovia",
+            "concessionária",
+            "passagem",
+            "veículo",
+            "transponder",
+            "sem parar",
+            "tag",
+            "via fácil",
+            "ecoRodovias",
+            "CCR"
+        ]
+    },
+    {
+        "type": "estacionamento",
+        "keywords": [
+            "estacionamento",
+            "ticket",
+            "vaga",
+            "horas",
+            "minutos",
+            "permanência",
+            "entrada",
+            "saída",
+            "placa",
+            "veículo",
+            "carro",
+            "cobrado por hora",
+            "cancelas",
+            "parquímetro",
+            "manobrista"
+        ]
+    }
+]
