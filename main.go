@@ -12,7 +12,6 @@ import (
 )
 
 func main() {
-	// Definir o caminho para o arquivo de regras
 	userConfigDir, err := os.UserConfigDir()
 	if err != nil {
 		userConfigDir = "."
@@ -20,18 +19,16 @@ func main() {
 
 	configDir := filepath.Join(userConfigDir, "relatorios-go")
 	if err := os.MkdirAll(configDir, 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "Aviso: Não foi possível criar diretório de configuração: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Warning: Could not create configuration directory: %v\n", err)
 		configDir = "."
 	}
 
 	rulesFile := filepath.Join(configDir, "document_rules.json")
 
-	// Inicializar componentes do sistema
 	extractorFactory := extractors.NewDocumentExtractorFactory()
 	analyzeDocumentService := services.NewAnalyzeDocumentService(rulesFile)
 	classifier := classifiers.NewDocumentClassifier(analyzeDocumentService)
 
-	// Configurar o serviço de processamento de documentos
 	config := models.ProcessingConfig{
 		OutputDirectory: "./output",
 		MoveFiles:       false,
@@ -43,19 +40,16 @@ func main() {
 		config,
 	)
 
-	// Criar a interface de console
 	consoleInterface := ui.NewConsoleInterface(processingService)
 
-	// Determinar se o programa foi chamado com um argumento de caminho
 	var initialPath string
 	if len(os.Args) > 1 {
 		initialPath = os.Args[1]
 	}
 
-	// Iniciar a interface
 	err = consoleInterface.Start(initialPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Erro ao iniciar a aplicação: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error starting application: %v\n", err)
 		os.Exit(1)
 	}
 }
