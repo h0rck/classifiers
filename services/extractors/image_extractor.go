@@ -12,60 +12,50 @@ import (
 	"relatorios/models"
 )
 
-// ImageExtractor é um extrator que processa imagens usando OCR
 type ImageExtractor struct{}
 
-// ExtractText extrai texto de uma imagem usando OCR
 func (e *ImageExtractor) ExtractText(filePath string) (models.DocumentMetadata, error) {
-	// Determinar o sistema operacional
 	osType := runtime.GOOS
 
-	// Tentar encontrar o Tesseract com base no sistema operacional
 	tesseractPath, tesseractErr := e.findTesseract(osType)
 	if tesseractErr != nil {
-		// Instruções específicas para cada sistema
 		installInstructions := e.getInstallInstructions(osType)
 
-		fmt.Println("AVISO: Tesseract OCR não encontrado. " + installInstructions)
+		fmt.Println("WARNING: Tesseract OCR not found. " + installInstructions)
 
 		return models.DocumentMetadata{
 			Filename: filepath.Base(filePath),
-			Text:     fmt.Sprintf("Imagem: %s (OCR não disponível)\n\n%s", filepath.Base(filePath), installInstructions),
+			Text:     fmt.Sprintf("Image: %s (OCR not available)\n\n%s", filepath.Base(filePath), installInstructions),
 		}, nil
 	}
 
-	// Criar um arquivo temporário para a saída do tesseract
 	tempDir, err := os.MkdirTemp("", "tesseract-output")
 	if err != nil {
-		return models.DocumentMetadata{}, fmt.Errorf("falha ao criar diretório temporário: %w", err)
+		return models.DocumentMetadata{}, fmt.Errorf("failed to create temporary directory: %w", err)
 	}
 	defer os.RemoveAll(tempDir)
 
 	outputPrefix := filepath.Join(tempDir, "output")
 
-	// Executar o tesseract (com suporte para português)
 	cmd := exec.Command(tesseractPath, filePath, outputPrefix, "-l", "por")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		// Verificar se o erro é relacionado ao idioma português
 		if strings.Contains(string(output), "Error opening data file") ||
 			strings.Contains(string(output), "Failed loading language 'por'") {
-			// Tentar com o idioma padrão (geralmente inglês)
-			fmt.Println("AVISO: Pacote de idioma português não encontrado. Usando idioma padrão Inglês.")
+			fmt.Println("WARNING: Portuguese language package not found. Using default English.")
 			cmd = exec.Command(tesseractPath, filePath, outputPrefix)
 			output, err = cmd.CombinedOutput()
 			if err != nil {
-				return models.DocumentMetadata{}, fmt.Errorf("falha ao executar OCR: %w\nSaída: %s", err, string(output))
+				return models.DocumentMetadata{}, fmt.Errorf("failed to execute OCR: %w\nOutput: %s", err, string(output))
 			}
 		} else {
-			return models.DocumentMetadata{}, fmt.Errorf("falha ao executar OCR: %w\nSaída: %s", err, string(output))
+			return models.DocumentMetadata{}, fmt.Errorf("failed to execute OCR: %w\nOutput: %s", err, string(output))
 		}
 	}
 
-	// Ler o arquivo de saída
 	textBytes, err := os.ReadFile(outputPrefix + ".txt")
 	if err != nil {
-		return models.DocumentMetadata{}, fmt.Errorf("falha ao ler saída do OCR: %w", err)
+		return models.DocumentMetadata{}, fmt.Errorf("failed to read OCR output: %w", err)
 	}
 
 	text := e.postprocessText(string(textBytes))
@@ -76,15 +66,12 @@ func (e *ImageExtractor) ExtractText(filePath string) (models.DocumentMetadata, 
 	}, nil
 }
 
-// findTesseract tenta encontrar o executável do Tesseract com base no sistema operacional
 func (e *ImageExtractor) findTesseract(osType string) (string, error) {
-	// Primeiro, tentar encontrar no PATH (funciona em qualquer sistema operacional)
 	tesseractPath, err := exec.LookPath("tesseract")
 	if err == nil {
 		return tesseractPath, nil
 	}
 
-	// Verificar caminhos comuns com base no sistema operacional
 	var possiblePaths []string
 
 	switch osType {
@@ -94,11 +81,11 @@ func (e *ImageExtractor) findTesseract(osType string) (string, error) {
 			"C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe",
 			"C:\\Tesseract-OCR\\tesseract.exe",
 		}
-	case "darwin": // macOS
+	case "darwin":
 		possiblePaths = []string{
 			"/usr/local/bin/tesseract",
 			"/opt/homebrew/bin/tesseract",
-			"/opt/local/bin/tesseract", // MacPorts
+			"/opt/local/bin/tesseract",
 		}
 	case "linux":
 		possiblePaths = []string{
@@ -108,55 +95,49 @@ func (e *ImageExtractor) findTesseract(osType string) (string, error) {
 		}
 	}
 
-	// Verificar cada caminho possível
 	for _, path := range possiblePaths {
 		if _, err := os.Stat(path); err == nil {
 			return path, nil
 		}
 	}
 
-	return "", fmt.Errorf("tesseract não encontrado")
+	return "", fmt.Errorf("tesseract not found")
 }
 
-// getInstallInstructions retorna instruções específicas para o sistema operacional
 func (e *ImageExtractor) getInstallInstructions(osType string) string {
 	switch osType {
 	case "windows":
-		return "Para instalar o Tesseract OCR no Windows:\n" +
-			"1. Acesse https://github.com/UB-Mannheim/tesseract/wiki\n" +
-			"2. Baixe o instalador mais recente (tesseract-ocr-w64-setup-v5.x.x.exe)\n" +
-			"3. Durante a instalação, selecione o idioma português\n" +
-			"4. Reinicie o aplicativo após a instalação"
+		return "To install Tesseract OCR on Windows:\n" +
+			"1. Visit https://github.com/UB-Mannheim/tesseract/wiki\n" +
+			"2. Download the latest installer (tesseract-ocr-w64-setup-v5.x.x.exe)\n" +
+			"3. During installation, select desired languages\n" +
+			"4. Restart the application after installation"
 
-	case "darwin": // macOS
-		return "Para instalar o Tesseract OCR no macOS:\n" +
-			"1. Instale o Homebrew se ainda não tiver (https://brew.sh/)\n" +
-			"2. Execute no terminal: brew install tesseract tesseract-lang\n" +
-			"3. Reinicie o aplicativo após a instalação"
+	case "darwin":
+		return "To install Tesseract OCR on macOS:\n" +
+			"1. Install Homebrew if you don't have it (https://brew.sh/)\n" +
+			"2. Run in terminal: brew install tesseract tesseract-lang\n" +
+			"3. Restart the application after installation"
 
 	case "linux":
-		return "Para instalar o Tesseract OCR no Ubuntu/Debian:\n" +
-			"sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-por\n\n" +
-			"Para Fedora/RHEL:\n" +
-			"sudo dnf install -y tesseract tesseract-langpack-por"
+		return "To install Tesseract OCR on Ubuntu/Debian:\n" +
+			"sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng\n\n" +
+			"For Fedora/RHEL:\n" +
+			"sudo dnf install -y tesseract tesseract-langpack-eng"
 
 	default:
-		return "Para instalar o Tesseract OCR, consulte as instruções em: https://github.com/tesseract-ocr/tesseract"
+		return "To install Tesseract OCR, see instructions at: https://github.com/tesseract-ocr/tesseract"
 	}
 }
 
-// postprocessText limpa e formata o texto extraído pela OCR
 func (e *ImageExtractor) postprocessText(text string) string {
-	// Se o texto estiver vazio, retornar mensagem
 	if strings.TrimSpace(text) == "" {
-		return "Não foi possível extrair texto desta imagem."
+		return "Could not extract text from this image."
 	}
 
-	// Remover espaços extras
 	re := regexp.MustCompile(`\s+`)
 	text = re.ReplaceAllString(text, " ")
 
-	// Substituir quebras de linha por espaços
 	text = strings.ReplaceAll(text, "\r\n", " ")
 	text = strings.ReplaceAll(text, "\n", " ")
 	text = strings.ReplaceAll(text, "\r", " ")
@@ -164,7 +145,6 @@ func (e *ImageExtractor) postprocessText(text string) string {
 	return strings.TrimSpace(text)
 }
 
-// IsSupportedFormat verifica se o formato do arquivo é suportado
 func (e *ImageExtractor) IsSupportedFormat(filePath string) bool {
 	supportedFormats := []string{".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".gif"}
 	ext := strings.ToLower(filepath.Ext(filePath))
@@ -177,7 +157,6 @@ func (e *ImageExtractor) IsSupportedFormat(filePath string) bool {
 	return false
 }
 
-// GetSupportedFormats retorna os formatos suportados por este extrator
 func (e *ImageExtractor) GetSupportedFormats() []string {
 	return []string{".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".gif"}
 }

@@ -8,14 +8,12 @@ import (
 	"github.com/unidoc/unioffice/document"
 )
 
-// WordExtractor é um extrator que lê arquivos DOCX
 type WordExtractor struct{}
 
-// ExtractText extrai o texto de um arquivo Word (DOCX)
 func (e *WordExtractor) ExtractText(filePath string) (models.DocumentMetadata, error) {
 	doc, err := document.Open(filePath)
 	if err != nil {
-		return models.DocumentMetadata{}, fmt.Errorf("falha ao abrir documento Word: %w", err)
+		return models.DocumentMetadata{}, fmt.Errorf("failed to open Word document: %w", err)
 	}
 
 	var text string
@@ -32,13 +30,11 @@ func (e *WordExtractor) ExtractText(filePath string) (models.DocumentMetadata, e
 	}, nil
 }
 
-// IsSupportedFormat verifica se o formato do arquivo é suportado
 func (e *WordExtractor) IsSupportedFormat(filePath string) bool {
 	ext := filepath.Ext(filePath)
 	return ext == ".docx" || ext == ".doc"
 }
 
-// GetSupportedFormats retorna os formatos suportados por este extrator
 func (e *WordExtractor) GetSupportedFormats() []string {
 	return []string{".docx", ".doc"}
 }
