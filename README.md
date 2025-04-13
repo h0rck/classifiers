@@ -49,7 +49,7 @@ classifiers is designed to streamline document processing workflows by automatin
 Run the application with an optional path to process:
 
 ```
-./classifiers [path/to/documents]
+./classifiers
 ```
 
 If no path is provided, the application will prompt for one.
@@ -83,20 +83,3 @@ You can modify the default processing behavior by adjusting the `models.Processi
 
 To support additional document types, create new extractors in the `/services/extractors` directory and register them in the `DocumentExtractorFactory`.
 
-## Development
-
-### Adding New Features
-
-1. Follow the SOLID principles
-2. Use descriptive variable and function names
-3. Write all code and documentation in English
-4. Use camelCase for variables and functions
-5. Exported functions must start with uppercase letter
-
-## License
-
-[Include your license information here]
-
-## Contributors
-
-[List contributors or invite people to contribute]
