@@ -1,10 +1,68 @@
 package models
 
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+)
+
+// DocumentRule define uma regra para classificação de documentos
 type DocumentRule struct {
-	Type     string
-	Keywords []string
+	Type     string   `json:"type"`
+	Keywords []string `json:"keywords"`
 }
 
+// LoadRulesFromJSON carrega regras de classificação de um arquivo JSON
+func LoadRulesFromJSON(filePath string) ([]DocumentRule, error) {
+	// Verificar se o arquivo existe
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		// Se o arquivo não existe, criar com as regras padrão
+		defaultRules := GetDefaultRules()
+		if err := SaveRulesToJSON(filePath, defaultRules); err != nil {
+			return nil, fmt.Errorf("falha ao criar arquivo de regras padrão: %w", err)
+		}
+		return defaultRules, nil
+	}
+
+	// Ler o arquivo JSON
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("falha ao ler arquivo de regras: %w", err)
+	}
+
+	// Decodificar o JSON
+	var rules []DocumentRule
+	if err := json.Unmarshal(data, &rules); err != nil {
+		return nil, fmt.Errorf("falha ao decodificar regras JSON: %w", err)
+	}
+
+	return rules, nil
+}
+
+// SaveRulesToJSON salva as regras em um arquivo JSON
+func SaveRulesToJSON(filePath string, rules []DocumentRule) error {
+	// Garantir que o diretório existe
+	dir := filepath.Dir(filePath)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return fmt.Errorf("falha ao criar diretório para o arquivo de regras: %w", err)
+	}
+
+	// Codificar as regras para JSON com formatação legível
+	data, err := json.MarshalIndent(rules, "", "  ")
+	if err != nil {
+		return fmt.Errorf("falha ao codificar regras para JSON: %w", err)
+	}
+
+	// Escrever no arquivo
+	if err := os.WriteFile(filePath, data, 0644); err != nil {
+		return fmt.Errorf("falha ao salvar arquivo de regras: %w", err)
+	}
+
+	return nil
+}
+
+// GetDefaultRules retorna o conjunto padrão de regras de classificação
 func GetDefaultRules() []DocumentRule {
 	return []DocumentRule{
 		{

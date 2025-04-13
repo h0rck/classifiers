@@ -64,10 +64,12 @@ func (ci *ConsoleInterface) showMainMenu() {
 	fmt.Println("\nSelecione uma opção:")
 	fmt.Println("1. Processar um único arquivo")
 	fmt.Println("2. Processar todos os arquivos em uma pasta")
-	fmt.Println("3. Sair")
+	fmt.Println("3. Mostrar regras de classificação atual")
+	fmt.Println("4. Recarregar regras de classificação")
+	fmt.Println("5. Sair")
 	fmt.Println()
 
-	fmt.Print("Digite sua escolha (1-3): ")
+	fmt.Print("Digite sua escolha (1-5): ")
 	choice, _ := ci.reader.ReadString('\n')
 	choice = strings.TrimSpace(choice)
 
@@ -77,6 +79,10 @@ func (ci *ConsoleInterface) showMainMenu() {
 	case "2":
 		ci.selectDirectory()
 	case "3":
+		ci.showClassificationRules()
+	case "4":
+		ci.reloadClassificationRules()
+	case "5":
 		fmt.Println("Encerrando o programa...")
 		os.Exit(0)
 	default:
@@ -84,6 +90,49 @@ func (ci *ConsoleInterface) showMainMenu() {
 		ci.readLine()
 		ci.showMainMenu()
 	}
+}
+
+// showClassificationRules exibe as regras de classificação atuais
+func (ci *ConsoleInterface) showClassificationRules() {
+	fmt.Print("\033[H\033[2J") // Limpa a tela
+	fmt.Println("=== Regras de Classificação Atuais ===")
+
+	// Obter as regras do serviço
+	analyzeService := ci.processingService.GetAnalyzeService()
+	rules := analyzeService.GetRules()
+
+	// Mostrar o caminho do arquivo de regras
+	fmt.Printf("Arquivo de regras: %s\n\n", analyzeService.GetRulesFilePath())
+
+	// Exibir cada regra
+	for i, rule := range rules {
+		fmt.Printf("%d. Tipo: %s\n", i+1, rule.Type)
+		fmt.Printf("   Palavras-chave: %s\n\n", strings.Join(rule.Keywords, ", "))
+	}
+
+	fmt.Print("\nPressione Enter para voltar ao menu principal...")
+	ci.readLine()
+	ci.showMainMenu()
+}
+
+// reloadClassificationRules recarrega as regras de classificação do arquivo JSON
+func (ci *ConsoleInterface) reloadClassificationRules() {
+	fmt.Print("\033[H\033[2J") // Limpa a tela
+	fmt.Println("=== Recarregando Regras de Classificação ===")
+
+	// Recarregar as regras
+	analyzeService := ci.processingService.GetAnalyzeService()
+	err := analyzeService.ReloadRules()
+
+	if err != nil {
+		fmt.Printf("\nErro ao recarregar regras: %v\n", err)
+	} else {
+		fmt.Printf("\nRegras recarregadas com sucesso do arquivo:\n%s\n", analyzeService.GetRulesFilePath())
+	}
+
+	fmt.Print("\nPressione Enter para voltar ao menu principal...")
+	ci.readLine()
+	ci.showMainMenu()
 }
 
 // selectFile exibe uma navegação de arquivos para o usuário selecionar um arquivo

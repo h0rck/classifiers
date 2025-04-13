@@ -1,17 +1,17 @@
 package classifiers
 
 import (
+	"relatorios/interfaces"
 	"relatorios/models"
-	"relatorios/services"
 )
 
 // DocumentClassifier implementa a interface DocumentClassifier
 type DocumentClassifier struct {
-	analyzeService *services.AnalyzeDocumentService
+	analyzeService interfaces.AnalyzeService
 }
 
 // NewDocumentClassifier cria uma nova instância do classificador
-func NewDocumentClassifier(analyzeService *services.AnalyzeDocumentService) *DocumentClassifier {
+func NewDocumentClassifier(analyzeService interfaces.AnalyzeService) *DocumentClassifier {
 	return &DocumentClassifier{
 		analyzeService: analyzeService,
 	}
@@ -27,4 +27,9 @@ func (c *DocumentClassifier) Classify(document models.DocumentMetadata) (models.
 // GetClassifierName retorna o nome do classificador
 func (c *DocumentClassifier) GetClassifierName() string {
 	return "Classificador de Palavras-Chave"
+}
+
+// GetAnalyzeService retorna o serviço de análise usado pelo classificador
+func (c *DocumentClassifier) GetAnalyzeService() interfaces.AnalyzeService {
+	return c.analyzeService
 }

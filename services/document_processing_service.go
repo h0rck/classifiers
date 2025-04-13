@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"relatorios/interfaces"
 	"relatorios/models"
+	"relatorios/services/classifiers"
 	"relatorios/services/extractors"
 )
 
@@ -178,4 +179,13 @@ func (s *DocumentProcessingService) organizeFile(filePath string, documentType s
 	}
 
 	return destPath, nil
+}
+
+// GetAnalyzeService retorna o serviço de análise usado pelo classificador
+func (s *DocumentProcessingService) GetAnalyzeService() interfaces.AnalyzeService {
+	// Aqui usamos a interface AnalyzeService em vez do tipo concreto
+	if classifier, ok := s.classifier.(*classifiers.DocumentClassifier); ok {
+		return classifier.GetAnalyzeService()
+	}
+	return nil
 }

@@ -8,19 +8,50 @@ import (
 
 // AnalyzeDocumentService é responsável por analisar e classificar documentos
 type AnalyzeDocumentService struct {
-	rules []models.DocumentRule
+	rules     []models.DocumentRule
+	rulesFile string
 }
 
 // NewAnalyzeDocumentService cria uma nova instância do serviço
-func NewAnalyzeDocumentService() *AnalyzeDocumentService {
+func NewAnalyzeDocumentService(rulesFile string) *AnalyzeDocumentService {
+	// Carregar regras do arquivo JSON ou usar as regras padrão
+	rules, err := models.LoadRulesFromJSON(rulesFile)
+	if err != nil {
+		// Se houver erro, usar as regras padrão
+		rules = models.GetDefaultRules()
+	}
+
 	return &AnalyzeDocumentService{
-		rules: models.GetDefaultRules(),
+		rules:     rules,
+		rulesFile: rulesFile,
 	}
 }
 
 // SetRules permite alterar as regras de classificação
 func (s *AnalyzeDocumentService) SetRules(rules []models.DocumentRule) {
 	s.rules = rules
+	// Salvar as novas regras no arquivo JSON
+	_ = models.SaveRulesToJSON(s.rulesFile, rules)
+}
+
+// GetRules retorna as regras de classificação atuais
+func (s *AnalyzeDocumentService) GetRules() []models.DocumentRule {
+	return s.rules
+}
+
+// ReloadRules recarrega as regras do arquivo JSON
+func (s *AnalyzeDocumentService) ReloadRules() error {
+	rules, err := models.LoadRulesFromJSON(s.rulesFile)
+	if err != nil {
+		return err
+	}
+	s.rules = rules
+	return nil
+}
+
+// GetRulesFilePath retorna o caminho do arquivo JSON de regras
+func (s *AnalyzeDocumentService) GetRulesFilePath() string {
+	return s.rulesFile
 }
 
 // Execute analisa o texto do documento e gera uma classificação
