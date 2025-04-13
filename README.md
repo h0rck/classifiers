@@ -45,20 +45,7 @@ The classifier can identify various document types including:
 - 📝 Reports
 - ➕ And more, depending on your rule configurations
 
-### Extending the Classifier
 
-The system follows a plugin architecture allowing for:
-- Adding new document types via rule definitions
-- Implementing custom classifiers for specialized document formats
-- Creating extraction strategies for different file types
-
-## Features
-
-- Automated document data extraction
-- Rule-based document classification
-- User-friendly console interface
-- Configurable processing workflow
-- Document archiving and organization
 
 ## Project Structure
 
