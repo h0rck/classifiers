@@ -2,7 +2,7 @@
 
 A document processing system written in Go that extracts data from documents and classifies them based on configurable rules.
 
-## ✨ How It Works ✨
+## How It Works 
 
 ### 1. Classification Rules
 > Rules define document types and the keywords that identify them.
