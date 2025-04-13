@@ -1,11 +1,3 @@
-# classifiers
-
-A powerful document processing system written in Go that extracts data from documents and classifies them according to configurable rules.
-
-## Overview
-
-classifiers is designed to streamline document processing workflows by automating the extraction of relevant information from various document types and classifying them based on customizable rule sets. It features a console interface for easy interaction and uses a configurable architecture to adapt to different document processing needs.
-
 ## ✨ How It Works ✨
 
 The document classification system automatically categorizes documents based on their content and predefined rules:
@@ -44,8 +36,6 @@ The classifier can identify various document types including:
 - 🧾 Receipts
 - 📝 Reports
 - ➕ And more, depending on your rule configurations
-
-
 
 ## Project Structure
 
