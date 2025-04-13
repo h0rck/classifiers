@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"relatorios/models"
 	"relatorios/services"
 	"relatorios/services/classifiers"
 	"relatorios/services/extractors"
@@ -16,7 +17,7 @@ func main() {
 	classifier := classifiers.NewDocumentClassifier(analyzeDocumentService)
 
 	// Configurar o serviço de processamento de documentos
-	config := services.ProcessingConfig{
+	config := models.ProcessingConfig{
 		OutputDirectory: "./output",
 		MoveFiles:       true,
 	}

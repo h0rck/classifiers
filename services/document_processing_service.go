@@ -10,40 +10,18 @@ import (
 	"relatorios/services/extractors"
 )
 
-// ProcessingConfig contém configurações para o processamento de documentos
-type ProcessingConfig struct {
-	OutputDirectory string
-	MoveFiles       bool
-}
-
-// ProcessingResult representa os resultados do processamento de vários documentos
-type ProcessingResult struct {
-	ProcessedCount int
-	FailedCount    int
-	Results        []FileProcessingResult
-}
-
-// FileProcessingResult representa o resultado do processamento de um arquivo
-type FileProcessingResult struct {
-	Filename     string
-	Success      bool
-	DocumentType string
-	Confidence   float64
-	Error        string
-}
-
 // DocumentProcessingService gerencia o processamento de documentos
 type DocumentProcessingService struct {
 	extractorFactory *extractors.DocumentExtractorFactory
 	classifier       interfaces.DocumentClassifier
-	config           ProcessingConfig
+	config           models.ProcessingConfig
 }
 
 // NewDocumentProcessingService cria uma nova instância do serviço
 func NewDocumentProcessingService(
 	extractorFactory *extractors.DocumentExtractorFactory,
 	classifier interfaces.DocumentClassifier,
-	config ProcessingConfig,
+	config models.ProcessingConfig,
 ) *DocumentProcessingService {
 	return &DocumentProcessingService{
 		extractorFactory: extractorFactory,
@@ -102,7 +80,7 @@ func (s *DocumentProcessingService) ProcessSingleFile(filePath string) (models.D
 }
 
 // ProcessDirectory processa todos os arquivos em um diretório
-func (s *DocumentProcessingService) ProcessDirectory(dirPath string) (*ProcessingResult, error) {
+func (s *DocumentProcessingService) ProcessDirectory(dirPath string) (*models.ProcessingResult, error) {
 	// Verificar se o diretório existe
 	fileInfo, err := os.Stat(dirPath)
 	if err != nil {
@@ -120,8 +98,8 @@ func (s *DocumentProcessingService) ProcessDirectory(dirPath string) (*Processin
 	}
 
 	// Resultados
-	result := &ProcessingResult{
-		Results: make([]FileProcessingResult, 0),
+	result := &models.ProcessingResult{
+		Results: make([]models.FileProcessingResult, 0),
 	}
 
 	// Processar cada arquivo
@@ -135,7 +113,7 @@ func (s *DocumentProcessingService) ProcessDirectory(dirPath string) (*Processin
 		// Verificar se o formato é suportado
 		if !s.extractorFactory.IsFormatSupported(filePath) {
 			result.FailedCount++
-			result.Results = append(result.Results, FileProcessingResult{
+			result.Results = append(result.Results, models.FileProcessingResult{
 				Filename: file.Name(),
 				Success:  false,
 				Error:    "Formato não suportado",
@@ -146,18 +124,17 @@ func (s *DocumentProcessingService) ProcessDirectory(dirPath string) (*Processin
 		document, _, err := s.ProcessSingleFile(filePath)
 		if err != nil {
 			result.FailedCount++
-			result.Results = append(result.Results, FileProcessingResult{
+			result.Results = append(result.Results, models.FileProcessingResult{
 				Filename: file.Name(),
 				Success:  false,
 				Error:    err.Error(),
 			})
 		} else {
 			result.ProcessedCount++
-			result.Results = append(result.Results, FileProcessingResult{
+			result.Results = append(result.Results, models.FileProcessingResult{
 				Filename:     file.Name(),
 				Success:      true,
 				DocumentType: document.Classification.DocumentType,
-				Confidence:   document.Classification.Confidence,
 			})
 		}
 	}

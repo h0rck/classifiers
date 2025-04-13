@@ -126,7 +126,6 @@ func (ci *ConsoleInterface) handleSingleFile(filePath string) error {
 	fmt.Printf("Arquivo: %s\n", document.Filename)
 	if document.Classification != nil {
 		fmt.Printf("Tipo de documento: %s\n", document.Classification.DocumentType)
-		fmt.Printf("Confiança: %.2f\n", document.Classification.Confidence)
 		fmt.Printf("Palavras-chave: %s\n", strings.Join(document.Classification.Keywords, ", "))
 	} else {
 		fmt.Println("Não foi possível classificar o documento")
@@ -151,10 +150,9 @@ func (ci *ConsoleInterface) handleDirectory(dirPath string) error {
 
 	for _, fileResult := range result.Results {
 		if fileResult.Success {
-			fmt.Printf("\n✓ %s → %s (%.2f)\n",
+			fmt.Printf("\n✓ %s → %s\n",
 				fileResult.Filename,
-				fileResult.DocumentType,
-				fileResult.Confidence)
+				fileResult.DocumentType)
 		} else {
 			fmt.Printf("\n✗ %s → FALHA: %s\n",
 				fileResult.Filename,
