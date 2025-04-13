@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -26,74 +25,6 @@ func main() {
 	}
 
 	rulesFile := filepath.Join(configDir, "document_rules.json")
-
-	// Criar regras padrão
-	defaultRules := []map[string]interface{}{
-		{
-			"type": "Contrato",
-			"keywords": []string{
-				"contrato", "cláusula", "partes", "rescisão", "acordo",
-				"contratante", "contratado", "obrigações", "vigência",
-				"objeto", "firmado", "assinatura", "foro", "jurisdição",
-				"prazo", "pagamento", "multas", "condições", "confidencialidade",
-			},
-		},
-		{
-			"type": "Nota Fiscal",
-			"keywords": []string{
-				"nota fiscal", "nf-e", "nfe", "cnpj", "emissão",
-				"impostos", "valor total", "data de emissão", "discriminação",
-				"produto", "quantidade", "total", "icms", "ipi",
-				"cofins", "pis", "alíquota", "natureza da operação",
-				"destinatário", "emitente",
-			},
-		},
-		{
-			"type": "Recibo",
-			"keywords": []string{
-				"recibo", "recebi", "valor", "quantia", "pagamento",
-				"referente", "importância", "pago", "assinatura",
-				"recebedor", "pagador", "comprovante", "quitado",
-				"data do pagamento",
-			},
-		},
-		{
-			"type": "Relatório",
-			"keywords": []string{
-				"relatório", "análise", "conclusão", "avaliação",
-				"resultados", "período", "dados", "pesquisa",
-				"metodologia", "introdução", "objetivo", "sumário",
-				"estatísticas", "gráficos", "observações",
-			},
-		},
-		{
-			"type": "Currículo",
-			"keywords": []string{
-				"currículo", "curriculum", "vitae", "experiência",
-				"formação", "profissional", "habilidades", "escolaridade",
-				"idiomas", "qualificações", "certificações",
-				"conhecimentos", "objetivo profissional", "referências",
-				"contato", "telefone", "email", "linkedin",
-			},
-		},
-	}
-
-	// Salvar regras padrão no arquivo de regras, se ele não existir
-	if _, err := os.Stat(rulesFile); os.IsNotExist(err) {
-		file, err := os.Create(rulesFile)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Erro ao criar arquivo de regras: %v\n", err)
-			os.Exit(1)
-		}
-		defer file.Close()
-
-		encoder := json.NewEncoder(file)
-		encoder.SetIndent("", "  ")
-		if err := encoder.Encode(defaultRules); err != nil {
-			fmt.Fprintf(os.Stderr, "Erro ao salvar regras padrão: %v\n", err)
-			os.Exit(1)
-		}
-	}
 
 	// Inicializar componentes do sistema
 	extractorFactory := extractors.NewDocumentExtractorFactory()

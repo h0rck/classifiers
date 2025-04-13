@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"relatorios/models"
 	"relatorios/services"
 	"sort"
 	"strings"
@@ -61,15 +62,21 @@ func (ci *ConsoleInterface) showMainMenu() {
 	fmt.Println("====================================")
 	fmt.Printf("\nClassificador: %s\n", ci.processingService.GetClassifierName())
 	fmt.Printf("Formatos suportados: %s\n", strings.Join(ci.processingService.GetSupportedFormats(), ", "))
+
+	// Mostrar o arquivo de regras atual
+	analyzeService := ci.processingService.GetAnalyzeService()
+	fmt.Printf("Arquivo de regras: %s\n", analyzeService.GetRulesFilePath())
+
 	fmt.Println("\nSelecione uma opção:")
 	fmt.Println("1. Processar um único arquivo")
 	fmt.Println("2. Processar todos os arquivos em uma pasta")
 	fmt.Println("3. Mostrar regras de classificação atual")
 	fmt.Println("4. Recarregar regras de classificação")
-	fmt.Println("5. Sair")
+	fmt.Println("5. Selecionar arquivo de regras")
+	fmt.Println("6. Sair")
 	fmt.Println()
 
-	fmt.Print("Digite sua escolha (1-5): ")
+	fmt.Print("Digite sua escolha (1-6): ")
 	choice, _ := ci.reader.ReadString('\n')
 	choice = strings.TrimSpace(choice)
 
@@ -83,6 +90,8 @@ func (ci *ConsoleInterface) showMainMenu() {
 	case "4":
 		ci.reloadClassificationRules()
 	case "5":
+		ci.selectRulesFile()
+	case "6":
 		fmt.Println("Encerrando o programa...")
 		os.Exit(0)
 	default:
@@ -128,6 +137,63 @@ func (ci *ConsoleInterface) reloadClassificationRules() {
 		fmt.Printf("\nErro ao recarregar regras: %v\n", err)
 	} else {
 		fmt.Printf("\nRegras recarregadas com sucesso do arquivo:\n%s\n", analyzeService.GetRulesFilePath())
+	}
+
+	fmt.Print("\nPressione Enter para voltar ao menu principal...")
+	ci.readLine()
+	ci.showMainMenu()
+}
+
+// selectRulesFile permite ao usuário selecionar um novo arquivo de regras JSON
+func (ci *ConsoleInterface) selectRulesFile() {
+	// Começar a partir do diretório atual
+	startDir, err := os.Getwd()
+	if err != nil {
+		startDir = "/"
+	}
+
+	fmt.Print("\033[H\033[2J") // Limpa a tela
+	fmt.Println("=== Selecionar Arquivo de Regras JSON ===")
+	fmt.Println("Navegue até o arquivo JSON que contém suas regras de classificação.")
+	fmt.Print("\nPressione Enter para continuar...")
+	ci.readLine()
+
+	// Reutilizar o navegador de arquivos, mas com filtro personalizado para arquivos JSON
+	selectedPath, err := ci.browseFilesWithFilter(startDir, true, []string{".json"})
+	if err != nil {
+		fmt.Printf("\nErro ao navegar pelos arquivos: %v\n", err)
+		fmt.Print("\nPressione Enter para voltar ao menu principal...")
+		ci.readLine()
+		ci.showMainMenu()
+		return
+	}
+
+	// Se o usuário cancelou a seleção
+	if selectedPath == "" {
+		ci.showMainMenu()
+		return
+	}
+
+	// Atualizar o arquivo de regras
+	analyzeService := ci.processingService.GetAnalyzeService()
+
+	// Tentar carregar as regras do novo arquivo
+	newRules, err := models.LoadRulesFromJSON(selectedPath)
+	if err != nil {
+		fmt.Printf("\nErro ao carregar regras do arquivo: %v\n", err)
+		fmt.Print("\nPressione Enter para voltar ao menu principal...")
+		ci.readLine()
+		ci.showMainMenu()
+		return
+	}
+
+	// Se foi bem sucedido, atualizar o serviço
+	err = analyzeService.SetRulesFile(selectedPath)
+	if err != nil {
+		fmt.Printf("\nErro ao definir novo arquivo de regras: %v\n", err)
+	} else {
+		fmt.Printf("\nArquivo de regras atualizado para: %s\n", selectedPath)
+		fmt.Printf("Carregadas %d regras de classificação\n", len(newRules))
 	}
 
 	fmt.Print("\nPressione Enter para voltar ao menu principal...")
@@ -203,6 +269,11 @@ func (ci *ConsoleInterface) selectDirectory() {
 
 // browseFiles permite ao usuário navegar pelos arquivos e diretórios
 func (ci *ConsoleInterface) browseFiles(currentDir string, selectFile bool) (string, error) {
+	return ci.browseFilesWithFilter(currentDir, selectFile, nil)
+}
+
+// browseFilesWithFilter permite ao usuário navegar pelos arquivos e diretórios com filtro personalizado
+func (ci *ConsoleInterface) browseFilesWithFilter(currentDir string, selectFile bool, allowedExtensions []string) (string, error) {
 	for {
 		fmt.Print("\033[H\033[2J") // Limpa a tela
 
@@ -210,7 +281,11 @@ func (ci *ConsoleInterface) browseFiles(currentDir string, selectFile bool) (str
 		fmt.Printf("Diretório atual: %s\n\n", currentDir)
 
 		if selectFile {
-			fmt.Println("=== Selecione um ARQUIVO ou navegue pelos diretórios ===")
+			if len(allowedExtensions) > 0 {
+				fmt.Printf("=== Selecione um arquivo %s ou navegue pelos diretórios ===\n", strings.Join(allowedExtensions, "/"))
+			} else {
+				fmt.Println("=== Selecione um ARQUIVO ou navegue pelos diretórios ===")
+			}
 		} else {
 			fmt.Println("=== Selecione um DIRETÓRIO ===")
 		}
@@ -237,9 +312,21 @@ func (ci *ConsoleInterface) browseFiles(currentDir string, selectFile bool) (str
 		for _, entry := range entries {
 			if entry.IsDir() {
 				dirs = append(dirs, entry)
-			} else if selectFile && ci.isFormatSupported(entry.Name()) {
-				// Se estamos selecionando um arquivo, mostrar apenas formatos suportados
-				files = append(files, entry)
+			} else if selectFile {
+				// Se estamos selecionando um arquivo
+				if len(allowedExtensions) > 0 {
+					// Verificar extensões permitidas
+					ext := strings.ToLower(filepath.Ext(entry.Name()))
+					for _, allowedExt := range allowedExtensions {
+						if ext == allowedExt {
+							files = append(files, entry)
+							break
+						}
+					}
+				} else if ci.isFormatSupported(entry.Name()) {
+					// Sem extensões específicas, usar os formatos suportados padrão
+					files = append(files, entry)
+				}
 			}
 		}
 
@@ -315,6 +402,26 @@ func (ci *ConsoleInterface) browseFiles(currentDir string, selectFile bool) (str
 				fmt.Print("Pressione Enter para continuar...")
 				ci.readLine()
 				continue
+			}
+
+			// Se temos extensões específicas, verificar se o arquivo selecionado é válido
+			if selectFile && len(allowedExtensions) > 0 && !info.IsDir() {
+				ext := strings.ToLower(filepath.Ext(path))
+				valid := false
+				for _, allowedExt := range allowedExtensions {
+					if ext == allowedExt {
+						valid = true
+						break
+					}
+				}
+
+				if !valid {
+					fmt.Printf("\nErro: O arquivo deve ter uma das seguintes extensões: %s\n",
+						strings.Join(allowedExtensions, ", "))
+					fmt.Print("Pressione Enter para continuar...")
+					ci.readLine()
+					continue
+				}
 			}
 
 			return path, nil

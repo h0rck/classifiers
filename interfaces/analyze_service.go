@@ -18,4 +18,7 @@ type AnalyzeService interface {
 
 	// SetRules permite alterar as regras de classificação
 	SetRules(rules []models.DocumentRule)
+
+	// SetRulesFile define um novo arquivo de regras e carrega as regras dele
+	SetRulesFile(filePath string) error
 }

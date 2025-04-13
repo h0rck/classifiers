@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+	"os"
 	"regexp"
 	"relatorios/models"
 	"strings"
@@ -15,11 +17,7 @@ type AnalyzeDocumentService struct {
 // NewAnalyzeDocumentService cria uma nova instância do serviço
 func NewAnalyzeDocumentService(rulesFile string) *AnalyzeDocumentService {
 	// Carregar regras do arquivo JSON ou usar as regras padrão
-	rules, err := models.LoadRulesFromJSON(rulesFile)
-	if err != nil {
-		// Se houver erro, usar as regras padrão
-		rules = models.GetDefaultRules()
-	}
+	rules, _ := models.LoadRulesFromJSON(rulesFile)
 
 	return &AnalyzeDocumentService{
 		rules:     rules,
@@ -52,6 +50,26 @@ func (s *AnalyzeDocumentService) ReloadRules() error {
 // GetRulesFilePath retorna o caminho do arquivo JSON de regras
 func (s *AnalyzeDocumentService) GetRulesFilePath() string {
 	return s.rulesFile
+}
+
+// SetRulesFile define um novo arquivo de regras e carrega as regras dele
+func (s *AnalyzeDocumentService) SetRulesFile(filePath string) error {
+	// Verificar se o arquivo existe
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		return fmt.Errorf("arquivo de regras não encontrado: %s", filePath)
+	}
+
+	// Carregar as regras do novo arquivo
+	rules, err := models.LoadRulesFromJSON(filePath)
+	if err != nil {
+		return fmt.Errorf("falha ao carregar regras do arquivo: %w", err)
+	}
+
+	// Atualizar o serviço com o novo arquivo e regras
+	s.rulesFile = filePath
+	s.rules = rules
+
+	return nil
 }
 
 // Execute analisa o texto do documento e gera uma classificação
