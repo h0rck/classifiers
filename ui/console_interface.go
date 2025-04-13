@@ -4,9 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
-
 	"relatorios/services"
+	"strings"
 )
 
 // ConsoleInterface gerencia a interface de linha de comando da aplicação
