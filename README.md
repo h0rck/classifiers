@@ -125,5 +125,5 @@ The system follows a plugin architecture allowing for:
 - Implementing custom classifiers for specialized document formats
 - Creating extraction strategies for different file types
 
-All components follow the SOLID principles to ensure maintainability and extensibility.
+
 
