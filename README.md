@@ -37,16 +37,6 @@ A document processing system written in Go that extracts data from documents and
 - `/services/classifiers` - Document classification logic
 - `/ui` - User interface components
 
-## Installation
-
-### Prerequisites
-- Go 1.16 or higher
-- Git
-
-### Steps
-1. Clone: `git clone https://github.com/h0rck/classifiers-go.git`
-2. Build: `go build`
-
 ## Dependencies
 
 ### Tesseract OCR
@@ -62,7 +52,7 @@ sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng
 ```
 
 ## Usage
-Run with path: `./classifiers [path]`
+Run with path: `./classifiers`
 
 
 
