@@ -55,10 +55,10 @@ brew install tesseract tesseract-lang
 **Linux (Ubuntu/Debian)**:
 ```
 # For English language support
-sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-eng
+sudo apt update && sudo apt install -y tesseract-ocr tesseract-ocr-eng
 
 # For Portuguese language support
-sudo apt-get install -y tesseract-ocr-por
+sudo apt install -y tesseract-ocr-por
 ```
 
 **Language Packs**:
